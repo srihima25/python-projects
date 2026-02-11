@@ -1,0 +1,92 @@
+import random
+
+DECK = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+
+
+def draw_card():
+    return random.choice(DECK)
+
+
+def calculate_score(hand):
+    total = sum(hand)
+
+    # If total is more than 21 and Ace(11) exists, convert it to 1
+    while total > 21 and 11 in hand:
+        ace_index = hand.index(11)
+        hand[ace_index] = 1
+        total = sum(hand)
+
+    return total
+
+
+def show_status(user_hand, dealer_hand):
+    print("\nYour cards:", user_hand, " Score:", calculate_score(user_hand))
+    print("Dealer first card:", dealer_hand[0])
+
+
+def blackjack_game():
+    user_hand = []
+    dealer_hand = []
+
+    # initial dealing
+    user_hand.append(draw_card())
+    user_hand.append(draw_card())
+
+    dealer_hand.append(draw_card())
+    dealer_hand.append(draw_card())
+
+    show_status(user_hand, dealer_hand)
+
+    # User turn
+    while True:
+        user_score = calculate_score(user_hand)
+
+        if user_score > 21:
+            print("\nYou busted! You lose.")
+            return
+
+        choice = input("\nType 'y' to draw another card, 'n' to stand: ").lower()
+
+        if choice == 'y':
+            user_hand.append(draw_card())
+            print("You drew a card:", user_hand[-1])
+            print("Your hand:", user_hand, " Score:", calculate_score(user_hand))
+
+        elif choice == 'n':
+            break
+
+        else:
+            print("Invalid input! Enter y or n.")
+
+    # Dealer turn
+    while calculate_score(dealer_hand) < 17:
+        dealer_hand.append(draw_card())
+
+    user_score = calculate_score(user_hand)
+    dealer_score = calculate_score(dealer_hand)
+
+    print("\n================ FINAL RESULT ================")
+    print("Your final hand:", user_hand, " Score:", user_score)
+    print("Dealer final hand:", dealer_hand, " Score:", dealer_score)
+
+    if dealer_score > 21:
+        print("Dealer busted! You WIN!")
+    elif dealer_score > user_score:
+        print("Dealer WIN!")
+    elif dealer_score < user_score:
+        print("You WIN!")
+    else:
+        print("It's a DRAW!")
+
+
+# Main loop
+while True:
+    start = input("\nDo you want to play Blackjack? (y/n): ").lower()
+
+    if start == 'y':
+        blackjack_game()
+    elif start == 'n':
+        print("Thanks for playing!")
+        break
+    else:
+        print("Please type y or n.")
